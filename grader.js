@@ -25,9 +25,9 @@ var fs = require('fs');
 var program = require('commander');
 var cheerio = require('cheerio');
 var HTMLFILE_DEFAULT = "index.html";
-var CHECKSFILE_DEFAULT = "checks.json";
+var CHECKSFILE_DEFAULT = "check.json";
 var  sys = require('util');
-var rest = require('./restler');
+var rest = require('restler');
 
 
 var assertFileExists = function(infile) {
@@ -66,24 +66,27 @@ var clone = function(fn) {
 
 var URLFunction = function(url)
 {
-   var file FromURL = 'file.txt';  
+   var fileFromURL = 'file.txt';  
    rest.get(url).on('complete', function(result)
      {
            if(result instanceof Error){sys.puts('Error:'+result.message);}
-           else{fs.writeFile(__dirname+'/'+filename, result, function (err)
+           else{fs.writeFile(__dirname+'/'+fileFromURL, result, function (err)
                {if (err) throw err;} );}
             
      });
+     return fileFromURL;
    // rest.dataResponse(url, result);
   //  return result;
 }
 //dataResponse(request, response);
 
 if(require.main == module) {
+ 
     program
         .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
         .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
-        .option('-u','--url <url>', 'Path to url', clone(assertURLExists), URL_DEFAULT)
+        .option('-u, --url <url>', 'Path to url')
+//, clone(assertURLExists), URL_DEFAULT)
         .parse(process.argv);
 
     if(program.url)
